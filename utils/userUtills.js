@@ -1,6 +1,5 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
-const { json } = require('express');
 const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
@@ -35,12 +34,12 @@ exports.login = async (req, res) => {
                 return res.status(200).json({
                     token: token
                 });
-            } else{
+            } else {
                 return res.status(300).json({
                     error: 'invalid username or password'
                 })
             }
-        }else {
+        } else {
             return res.status(404).json({
                 error: 'user not found'
             });
@@ -52,10 +51,54 @@ exports.login = async (req, res) => {
     }
 }
 
-exports.auth = async (req, res) =>{
+exports.verifyUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await userModel.findById(id);
+        if (user) {
+            user.verified = true;
+            await user.save();
+            return res.status(202).json({
+                message: 'user verified successfully'
+            });
+        } else {
+            return res.status(404).json({
+                error: 'user not found'
+            });
+        }
+    } catch (err) {
+        return res.status(500).json({
+            error: err.message
+        });
+    }
+}
+
+exports.rejectUser = async (req, res) =>{
+    const {id} = req.params;
+    try{
+        const user = await userModel.findById(id);
+        if(user){
+            user.verified = false;
+            await user.save();
+            return res.status(202).json({
+                message: 'user rejected successfully'
+            });
+        }else{
+            return res.status(404).json({
+                error: 'user not found'
+            });
+        }
+    }catch(err){
+        return res.status(500).json({
+            error: err.message
+        });
+    }
+}
+
+exports.auth = async (req, res) => {
     res.status(200).json({
         message: 'successful'
-    })
+    });
 }
 
 const createToken = (username, password) => {

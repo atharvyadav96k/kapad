@@ -8,6 +8,10 @@ user.post('/register', userUtils.register);
 
 user.post('/login', userUtils.login);
 
+user.post('/verify/:id', userUtils.verifyUser);
+
+user.post('/reject/:id', userUtils.rejectUser);
+
 user.post('/auth', userAuth, userUtils.auth);
 
 module.exports = user;
