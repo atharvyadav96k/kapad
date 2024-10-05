@@ -1,11 +1,11 @@
 const express = require('express');
-const bill = express.Router();
-const billUtils = require('../utils/billUtils');
+const router = express.Router();
+const billController = require('../utils/billUtils');
 
-bill.get('/get/:id', billUtils.get);
+router.post('/create/:id', billController.create);
 
-bill.post('/create/:id', billUtils.create);
+router.post('/delete/:id', billController.delete);
 
-bill.post('/edit/:id', billUtils.edit);
+router.get('/get/:id', billController.get);
 
-bill.post('/delete/:id', billUtils.delete);
+module.exports = router;

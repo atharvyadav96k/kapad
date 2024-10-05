@@ -8,9 +8,8 @@ const billSchema = new mongoose.Schema({
   },
   product: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
+    ref: 'Product'
   }
 });
 
-mongoose.model('bills', billSchema);
+module.exports = mongoose.model('Bills', billSchema);  

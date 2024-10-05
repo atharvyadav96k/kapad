@@ -3,9 +3,7 @@ const partySchema = require('../models/partyModel');
 exports.getParty = async (req, res) => {
     try {
         const party = await partySchema.find().select('_id name');
-        return res.status(200).json({
-            party
-        })
+        return res.status(200).json(party);
     }catch(err){
         return res.status(500).json({
             error: err.message

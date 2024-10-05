@@ -8,7 +8,7 @@ const partySchema = new mongoose.Schema({
   },
   bills: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Bill'
+    ref: 'Bills'
   }]
 });
 
