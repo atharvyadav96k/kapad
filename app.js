@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const partyRouter = require('./router/partyRouter');
 const userRouter = require('./router/userRouter')
 const billRouter = require('./router/billRouter');
+const productRouter = require('./router/producrRouter');
 
 const database = require('./connections/mongooseConnect');
 require('dotenv').config();
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use('/u', userRouter);
 app.use('/party', partyRouter);
 app.use('/bill', billRouter);
+app.use('/product', productRouter);
 
 app.get('/', (req, res)=>{
     res.render('index')

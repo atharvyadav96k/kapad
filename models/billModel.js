@@ -6,10 +6,15 @@ const billSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  product: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product'
-  }
+  product: [{
+    name: String,
+    quality: [
+      {
+        size: Number,
+        count: Number 
+      }
+    ]
+  }]
 });
 
 module.exports = mongoose.model('Bills', billSchema);  
