@@ -11,8 +11,8 @@ exports.add = async (req, res) => {
         const bill = await billSchema.findById(id);
         if (bill) {
             let products = bill.product;
+            bill.billStatus = 1;
             const index = products.findIndex(product => product.name === name);
-
             if (index === -1) {
                 products.push({ name, quality: [{ size, count }] });
             } else {

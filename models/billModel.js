@@ -6,6 +6,14 @@ const billSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  billStatus :{
+    type: Number,
+    default: 0
+  },
+  date: {
+    type: Date,
+    default: Date.now()
+  },
   product: [{
     name: String,
     quality: [

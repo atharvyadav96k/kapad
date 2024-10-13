@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/style/dashboard.css">
+    <link rel="stylesheet" href="/style/color.css">
+    <link rel="stylesheet" href="/style/pie.css">
+    <link rel="stylesheet" href="/style/style.css">
+    <style>
+        .link {
+            text-decoration: none;
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-dark text-light">
+    <div class="container">
+        <aside class="sidebar bg-primary">
+            <div class="logo">
+                <h2>Manage Business</h2>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li class="option-icon opacity50">
+                        <i><img src="/imgs/four-squares-icon.svg" alt=""></i>
+                        <a href="/dashboard" class="text-light2">Dashboard</a>
+                    </li class="option-icon">
+                    <li class="option-icon ">
+                        <i><img src="/imgs/young-businessman-icon.svg" alt=""></i>
+                        <a href="/party" class="text-light active">party</a>
+                    </li>
+                    <li class="option-icon opacity50">
+                        <i><img src="/imgs/qr-code-scan-icon.svg" alt=""></i>
+                        <a href="/barcode" class="text-light2">BarCode</a>
+                    </li>
+                    <li class="option-icon opacity50">
+                        <i><img src="/imgs/group-icon.svg" alt=""></i>
+                        <a href="/users" class="text-light2">Display users and verify</a>
+                    </li>
+                    <li class="option-icon opacity50">
+                        <i><img src="/imgs/profile-protection-icon.svg" alt=""></i>
+                        <a href="/activity" class="text-light2">Resent Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="profile"></div>
+            <header class="header">
+                <h1>Bills</h1>
+                <div class="insight-analyzer bg-light">
+                    <h3 class="text-dark">Bill manager</h3>
+                    <p class="text-secondary">Stay updated with bills</p>
+                </div>
+            </header>
+            <h1>
+                <%= name %>
+            </h1>
+            <section class="bill-section">
+                <table class="bill-table">
+                    <thead>
+                        <tr style="width: 100%; height: 40px;">
+                            <th>Date</th>
+                            <th>Bill Id</th>
+                            <th style="text-align: right;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i = 0; i < id.length; i++) { 
+                            let dateObj = new Date(date[i]);
+                            let hours = dateObj.getHours();
+                            let minutes = dateObj.getMinutes().toString().padStart(2, '0');
+                            let seconds = dateObj.getSeconds().toString().padStart(2, '0');
+                            let ampm = hours >= 12 ? 'PM' : 'AM';
+                            hours = hours % 12;
+                            hours = hours ? hours : 12;
+                            let formattedDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')} :   ${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+                        %>
+                            <tr>
+                                <td><a href="/bill/<%= id[i] %>" class="text-light link">
+                                    <%= formattedDate %>
+                                </a></td>
+                            <td>
+                                <a href="/bill/<%= id[i] %>" class="text-light link">
+                                    <%= billNo[i] %>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/bill/<%= id[i] %>" style="text-align: right;" class="text-light link">
+                                    <%= status[i] %>
+                                </a>
+                            </td> 
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>

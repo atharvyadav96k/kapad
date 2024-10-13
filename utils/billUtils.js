@@ -81,6 +81,42 @@ exports.delete = async (req, res) => {
     }
 }
 
+exports.status = async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Check if the status is valid
+    if (!(status >= 0 && status <= 2)) {
+        return res.status(400).json({
+            error: "Invalid Status"
+        });
+    }
+
+    try {
+        // Find the bill by ID
+        const bill = await billSchema.findById(id);
+        if (bill) {
+            // Update the bill status
+            bill.billStatus = status;
+            await bill.save();
+            return res.status(200).json({
+                message: `Status changed to ${status}`
+            });
+        } else {
+            return res.status(404).json({
+                error: "Bill not found"
+            });
+        }
+    } catch (err) {
+        // Log the error message (optional)
+        console.error(err.message);
+        return res.status(500).json({
+            error: "An error occurred while updating the status."
+        });
+    }
+};
+
+
 const inBillCount = async () => {
     try {
         const count = await BillCount.findOne();
