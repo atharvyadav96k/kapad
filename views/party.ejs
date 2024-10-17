@@ -9,12 +9,22 @@
     <link rel="stylesheet" href="./style/color.css">
     <link rel="stylesheet" href="./style/pie.css">
     <link rel="stylesheet" href="./style/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <style>
         .link {
             text-decoration: none;
             display: inline-block;
             width: 100%;
             height: 100%;
+        }
+        #searchParty {
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            border-radius: 30px;
+            border: none;
         }
     </style>
 </head>
@@ -60,48 +70,87 @@
                     <p class="text-secondary">Create and manage your partys</p>
                 </div>
             </header>
+            <input type="text" id="searchParty" placeholder="Search parties..." onkeyup="filterParties()">
+
             <section class="bill-section">
-                <table class="bill-table">
-                    <thead>
-                        <tr style="width: 100%; height: 40px;">
-                            <th>Party Name</th>
-                            <th>Pending</th>
-                            <th>Draft</th>
-                            <th>Delivered</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for(let i=0;i<party.length;i++){ %>
-                            <tr>
-                                <td><a href="/bill/<%= id[i] %>" class="text-light link">
-                                        <%= party[i] %>
-                                    </a></td>
+                <form id="newParty" method="post" style="float: right; margin-bottom: 10px;">
+                    <input type="text" name="name" placeholder="Party Name" style="padding: 10px 7px; border-radius: 30px; border-style: none;">
+                    <input type="submit" class="bg-success" value="New Party" style="padding:10px 7px; border-radius: 30px; border-style: none; ">
+                </form>
+                <script>
+                    const newParty = document.getElementById('newParty');
+                    
+                    newParty.addEventListener('submit', async (e) => {
+                        e.preventDefault(); 
+                        const name = newParty.name.value; 
+                        try {
+                            const response = await axios.post('/party/create', { name });
+                            window.location.reload();
+                            console.log('Response:', response.data);  
+                        } catch (error) {
+                            console.error('Error:', error); 
+                        }
+                    });
+                </script>
+                <section class="bill-section">
+                    <table class="bill-table">
+                        <thead>
+                            <tr style="width: 100%; height: 40px;">
+                                <th>Party Name</th>
+                                <th>Pending</th>
+                                <th>Draft</th>
+                                <th>Delivered</th>
+                                <th>Total</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partyList">
+                            <% for(let i = 0; i < party.length; i++) { %>
+                            <tr class="party-row">
+                                <td><a href="/bill/<%= id[i] %>" class="text-light link"><%= party[i] %></a></td>
+                                <td><a href="/bill/<%= id[i] %>" class="text-light link"><%= pending[i] %></a></td>
+                                <td><a href="/bill/<%= id[i] %>" class="text-light link"><%= draft[i] %></a></td>
+                                <td><a href="/bill/<%= id[i] %>" class="text-light link"><%= delivered[i] %></a></td>
+                                <td><a href="/bill/<%= id[i] %>" class="text-light link"><%= pending[i] + draft[i] + delivered[i] %></a></td>
                                 <td>
-                                    <a href="/bill/<%= id[i] %>" class="text-light link">
-                                        <%= pending[i] %>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="/bill/<%= id[i] %>" class="text-light link">
-                                        <%= draft[i] %>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="/bill/<%= id[i] %>" class="text-light link">
-                                        <%= delivered[i] %>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="/bill/<%= id[i] %>" class="text-light link">
-                                        <%= pending[i] + draft[i] + delivered[i] %>
-                                    </a>
+                                    <form id="delete-<%= i %>" method="post">
+                                        <input type="submit" class="bg-danger" value="delete" style="padding: 5px 10px; border-style: none; color: white;font-weight: bolder; font-size: 16px;border-radius: 5px;cursor: pointer;">
+                                    </form>
+                                    <script>
+                                        const deleteForm<%= i %> = document.getElementById('delete-<%= i %>');
+                                        deleteForm<%= i %>.addEventListener('submit', async (e) => {
+                                            e.preventDefault();  
+                                            let partyId = '<%= id[i] %>';
+                                            try {
+                                                const response = await axios.post(`/party/delete/${partyId}`);
+                                                window.location.reload();
+                                                console.log('Response:', response.data);
+                                            } catch (error) {
+                                                console.error('Error:', error);
+                                            }
+                                        });
+                                    </script>
                                 </td>
                             </tr>
                             <% } %>
-                    </tbody>
-                </table>
-            </section>
+                        </tbody>
+                    </table>
+                </section>
+                    <script>
+                        function filterParties() {
+                    const searchInput = document.getElementById('searchParty').value.toLowerCase();
+                    const partyRows = document.getElementsByClassName('party-row');
+
+                    Array.from(partyRows).forEach(row => {
+                        const partyName = row.querySelector('td a').textContent.toLowerCase();
+                        if (partyName.includes(searchInput)) {
+                            row.style.display = ''; // Show row if it matches search
+                        } else {
+                            row.style.display = 'none'; // Hide row if it doesn't match
+                        }
+                    });
+                }
+                    </script>
         </main>
     </div>
 </body>

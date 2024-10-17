@@ -4,7 +4,7 @@ const Party = require('../models/partyModel');
 const partyModel = require('../models/partyModel');
 
 exports.get = async (req, res) => {
-    console.log(id)
+    // console.log(id)
     try {
         const bills = await partyModel.findById(id).populate('bills');
         return res.status(200).json(bills)

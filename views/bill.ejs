@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="/style/color.css">
     <link rel="stylesheet" href="/style/pie.css">
     <link rel="stylesheet" href="/style/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <style>
         .link {
             text-decoration: none;
@@ -59,6 +62,13 @@
                     <h3 class="text-dark">Bill manager</h3>
                     <p class="text-secondary">Stay updated with bills</p>
                 </div>
+                <button class="btn-create-bill" id="createBillBtn" style="margin-top: 10px;">Add New Bill</button>   
+                <select id="billStatusFilter" style="margin-top: 10px; padding: 10px 7px; border-radius: 30px; font-size: 15px;">
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="draft">Draft</option>
+                    <option value="complete">Complete</option>
+                </select>    
             </header>
             <h1>
                 <%= name %>
@@ -84,11 +94,11 @@
                             let formattedDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')} :   ${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
                         %>
                             <tr>
-                                <td><a href="/bill/<%= id[i] %>" class="text-light link">
+                                <td><a href="/bill-data/<%= id[i] %>" class="text-light link">
                                     <%= formattedDate %>
                                 </a></td>
                             <td>
-                                <a href="/bill/<%= id[i] %>" class="text-light link">
+                                <a href="/bill-data/<%= id[i] %>" class="text-light link">
                                     <%= billNo[i] %>
                                 </a>
                             </td>
@@ -103,6 +113,36 @@
                 </table>
             </section>
         </main>
+        <script>
+            document.getElementById('createBillBtn').addEventListener('click', async () => {
+            try {
+                const userId = `<%= userId %>`;
+                const response = await axios.post(`/bill/create/${userId}`);
+                if (response.status === 201) {
+                    alert('Bill created successfully');
+                    window.location.reload(); // Reload the page to show the new bill
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // alert('Error creating the bill');
+            }
+        });
+        document.getElementById('billStatusFilter').addEventListener('change', function () {
+        const selectedStatus = this.value;
+        const rows = document.querySelectorAll('.bill-table tbody tr');
+
+        rows.forEach(row => {
+            const status = row.querySelector('td:nth-child(3) a').textContent.trim().toLowerCase();
+
+            // Show/Hide rows based on the selected status
+            if (selectedStatus === 'all' || status === selectedStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+        </script>
     </div>
 </body>
 

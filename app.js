@@ -9,6 +9,8 @@ const itemRouter = require('./router/itemRouter');
 const dashboardUtils = require('./utils/dashboard');
 const partyPage = require('./utils/partyPage');
 const billPage = require('./utils/billPage');
+const billDataUtil = require('./utils/billgetdata');
+
 
 const database = require('./connections/mongooseConnect');
 require('dotenv').config();
@@ -33,17 +35,14 @@ app.get('/', (req, res)=>{res.render('index')})
 app.get('/dashboard', async (req, res) => {
     try {
         const data = await  dashboardUtils.dashBoardData();
-        // console.log(data);
         return res.render('dashboard', data)
     } catch (err) {
         return res.render('error', {code: 500, message: err.message})
     }
-
 });
 app.get('/party', async (req, res) => {
     try{
         const data = await partyPage.partyPage();
-        // console.log(data)
         return res.render('party', data)
     }catch(err){
         console.log(err)
@@ -59,18 +58,24 @@ app.get('/bill/:id', async (req, res)=>{
         console.log(data)
         res.render("bill", data)
     }catch(err){
-
+        return res.render("error",{code: 500, message: err.message})
     }
 })
 
+app.get('/bill-data/:id', async (req, res)=>{
+    const {id} = req.params;
+    try{
+        const data = await billDataUtil.getBillData(id);
+        return res.render("billGet", {data: data.data, id: data.id});
+    }catch(err){
+        return res.render('error', {code: 500, message: err.message});
+    }
+})
 app.get('*', (req, res) => {
     res.render('error', {code: 404, message: "page your looking for is not found"})
 })
 app.listen(process.env.PORT, async () => {
     console.log(`app is running on port ${process.env.PORT}`);
     const open = (await import('open')).default;
-
-    // Open application in  browser
-
-    open(`http://localhost:${process.env.PORT}/dashboard`);
+    // open("http://localhost:3000/dashboard"); 
 });

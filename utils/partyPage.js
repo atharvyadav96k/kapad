@@ -40,7 +40,7 @@ exports.partyPage = async () => {
         delivered.push(cCount);
     }
 
-    console.log(party);
+    // console.log(party);
     return {
         party,
         pending,

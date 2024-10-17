@@ -6,6 +6,7 @@ exports.bill = async (id) => {
     let date = [];
     let billNo = [];
     let status = [];
+    let userId = id;
     const user = await partySchema.findById(id).populate('bills');
     if (!user) {
         throw new Error('Party not found');
@@ -20,14 +21,19 @@ exports.bill = async (id) => {
         }else if(u.billStatus == 1){
             status.push("Pending")
         }else{
-            status.push("Delivered");
+            status.push("Complete");
         }
     });
+    ids.reverse();
+    date.reverse();
+    billNo.reverse();
+    status.reverse();
     return {
         name,
         id: ids,
         date,
         billNo,
-        status
+        status,
+        userId
     };
 };

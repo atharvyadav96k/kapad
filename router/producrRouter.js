@@ -11,4 +11,5 @@ productRouter.post('/edit/:id', productUtils.edit);
 productRouter.post('/deleteName/:id', productUtils.deleteByName);
 
 productRouter.post('/deleteSize/:id', productUtils.deleteQuality);
+
 module.exports = productRouter;
