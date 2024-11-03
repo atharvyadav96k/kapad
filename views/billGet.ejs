@@ -34,7 +34,7 @@
                     </li>
                     <li class="option-icon">
                         <i><img src="/imgs/young-businessman-icon.svg" alt=""></i>
-                        <a href="/party" class="text-light active">Party</a>
+                        <a href="/party" class="text-light active">Parties</a>
                     </li>
                     <li class="option-icon opacity50">
                         <i><img src="/imgs/qr-code-scan-icon.svg" alt=""></i>
@@ -55,19 +55,29 @@
         <main class="main-content">
             <div class="profile"></div>
             <header class="header">
-                <h1>Bills</h1>
+                <h1>Bill items</h1>
                 <div class="insight-analyzer bg-light">
                     <h3 class="text-dark">Bill Manager</h3>
                     <p class="text-secondary">Stay updated with bills</p>
                 </div>
             </header>
-            
-            <!-- Dropdown for Bill Status -->
             <div>
-                <select name="billStatus" id="billStatus" style="padding: 7px 10px; border-radius: 30px;">
-                    <option value="1">Pending</option>
-                    <option value="2">Complete</option>
-                </select>
+                <script>
+                    console.log(status);
+                </script>
+                <% if(status == 1) {  %>
+                    <select name="billStatus" id="billStatus" style="padding: 7px 10px; border-radius: 30px;">
+                        <option value="1" selected>Pending</option>
+                        <option value="2">Complete</option>
+                    </select>
+                <% } else if(status == 2){ %>
+                    <select name="billStatus" id="billStatus" style="padding: 7px 10px; border-radius: 30px;">
+                        <option value="1">Pending</option>
+                        <option value="2" selected>Complete</option>
+                    </select>
+                <% }else{ %>
+                    <h2 class="text-warning">Draft</h6>
+                <% } %>
             </div>
             
             <!-- Bill Table -->
@@ -78,16 +88,20 @@
                             <th>Item</th>
                             <th>Size</th>
                             <th>Count</th>
-                            <th style="text-align: right;">Total</th>
+                            <th>Total</th>
+                            <th style="text-align: right;">Delete</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% data.forEach((ele) => { %>
+                        <% data.forEach((ele, i) => { %>
                             <tr>
                                 <td><a href="#" class="text-light link"><%= ele.name %></a></td>
                                 <td><a href="#" class="text-light link"><%= ele.item.size %></a></td>
                                 <td><a href="#" class="text-light link"><%= ele.item.count %></a></td>
-                                <td style="text-align: right;"><a href="#" class="text-light link"><%= ele.item.size * ele.item.count %>m</a></td>
+                                <td><a href="#" class="text-light link"><%= ele.item.size * ele.item.count %>m</a></td>
+                                <td style="text-align: right;">
+                                    <button class="bg-danger" onclick="deleteItem(`/product/deleteSize/<%= id %>`, `<%= ele.name %>`, `<%= ele.item.size %>`)">Delete</button>
+                                </td>
                             </tr>
                         <% }) %>
                     </tbody>
@@ -96,16 +110,13 @@
         </main>
 
         <script>
-            // Get the select element for bill status
             const bStatus = document.getElementById("billStatus");
-            const billId = `<%= id %>`; // Assuming you're passing billId dynamically
-
-            // Event listener for status change
+            const billId = `<%= id %>`;
             bStatus.addEventListener('change', async () => {
                 try {
                     const selectedStatus = bStatus.value;
                     console.log(selectedStatus)
-                    const response = await axios.post(`/bill/status/6707ff253f430a0820f3e9d0`, { status: selectedStatus });
+                    const response = await axios.post(`/bill/status/${billId}`, { status: selectedStatus });
                     if (response.status === 200) {
                         alert("Status changed successfully");
                     }
@@ -114,6 +125,17 @@
                     alert("Something went wrong");
                 }
             });
+            async function deleteItem(url, name, size){
+                try{
+                    const data = await axios.post(url, {name, size});
+                    if(data.status == 200){
+                        console.log(data.data);
+                        window.location.reload();
+                    }
+                }catch(err){
+                    alert(err.message)
+                }
+            }
         </script>
     </div>
 </body>

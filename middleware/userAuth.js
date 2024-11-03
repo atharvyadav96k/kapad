@@ -4,10 +4,12 @@ const jwt = require('jsonwebtoken')
 
 module.exports =  isAuthenticated = async (req, res, next) => {
     const { token } = req.body;
+    console.log("token : ", token)
     try {
         const data = jwt.verify(token, process.env.JWT_SECRET);
         const user = await userModel.findOne({ username: data.username });
-        if(user){
+        console.log("user : ", user)
+        if(user && user.verified == true){
             if (!bcrypt.compare(data.password, user.password)) {
                 return res.status(300).json({
                     error: 'invalid gate way'

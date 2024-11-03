@@ -1,10 +1,12 @@
 const billSchema = require('../models/billModel');
 
 exports.getBillData = async (id)=>{
-    const bill = await billSchema.findById(id).select('product');
+    const bill = await billSchema.findById(id).select('products');
     console.log(bill);
     let data = [];
-    bill.product.forEach((ele)=>{
+    let status = bill.billStatus;
+    console.log("status : ", status)
+    bill.products.forEach((ele)=>{
         console.log(ele.name)
         ele.quality.forEach((item)=>{
             data.push({
@@ -16,6 +18,5 @@ exports.getBillData = async (id)=>{
             })
         })
     });
-    // console.log(data)
-    return {data, id};
+    return {data, id, status};
 }

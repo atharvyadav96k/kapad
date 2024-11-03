@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/style/color.css">
     <link rel="stylesheet" href="/style/pie.css">
     <link rel="stylesheet" href="/style/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
                     </li class="option-icon">
                     <li class="option-icon ">
                         <i><img src="/imgs/young-businessman-icon.svg" alt=""></i>
-                        <a href="/party" class="text-light active">party</a>
+                        <a href="/party" class="text-light active">Parties</a>
                     </li>
                     <li class="option-icon opacity50">
                         <i><img src="/imgs/qr-code-scan-icon.svg" alt=""></i>
@@ -62,13 +62,14 @@
                     <h3 class="text-dark">Bill manager</h3>
                     <p class="text-secondary">Stay updated with bills</p>
                 </div>
-                <button class="btn-create-bill" id="createBillBtn" style="margin-top: 10px;">Add New Bill</button>   
-                <select id="billStatusFilter" style="margin-top: 10px; padding: 10px 7px; border-radius: 30px; font-size: 15px;">
+                <button class="btn-create-bill" id="createBillBtn" style="margin-top: 10px;">Add New Bill</button>
+                <select id="billStatusFilter"
+                    style="margin-top: 10px; padding: 10px 7px; border-radius: 30px; font-size: 15px;">
                     <option value="all">All</option>
                     <option value="pending">Pending</option>
                     <option value="draft">Draft</option>
                     <option value="complete">Complete</option>
-                </select>    
+                </select>
             </header>
             <h1>
                 <%= name %>
@@ -79,69 +80,77 @@
                         <tr style="width: 100%; height: 40px;">
                             <th>Date</th>
                             <th>Bill Id</th>
-                            <th style="text-align: right;">Status</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Delete</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for(let i = 0; i < id.length; i++) { 
-                            let dateObj = new Date(date[i]);
-                            let hours = dateObj.getHours();
-                            let minutes = dateObj.getMinutes().toString().padStart(2, '0');
-                            let seconds = dateObj.getSeconds().toString().padStart(2, '0');
-                            let ampm = hours >= 12 ? 'PM' : 'AM';
+                        <% for(let i=0; i < id.length; i++) { let dateObj=new Date(date[i]); let
+                            hours=dateObj.getHours(); let minutes=dateObj.getMinutes().toString().padStart(2, '0' ); let
+                            seconds=dateObj.getSeconds().toString().padStart(2, '0' ); let ampm=hours>= 12 ? 'PM' :
+                            'AM';
                             hours = hours % 12;
                             hours = hours ? hours : 12;
-                            let formattedDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')} :   ${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
-                        %>
+                            let formattedDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() +
+                            1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')} :
+                            ${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+                            %>
                             <tr>
                                 <td><a href="/bill-data/<%= id[i] %>" class="text-light link">
-                                    <%= formattedDate %>
-                                </a></td>
-                            <td>
-                                <a href="/bill-data/<%= id[i] %>" class="text-light link">
-                                    <%= billNo[i] %>
-                                </a>
-                            </td>
-                            <td>
-                                <a href="/bill/<%= id[i] %>" style="text-align: right;" class="text-light link">
-                                    <%= status[i] %>
-                                </a>
-                            </td> 
+                                        <%= formattedDate %>
+                                    </a></td>
+                                <td>
+                                    <a href="/bill-data/<%= id[i] %>" class="text-light link">
+                                        <%= billNo[i] %>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/bill/<%= id[i] %>" class="text-light link">
+                                        <%= status[i] %>
+                                    </a>
+                                </td>
+                                <td>
+                                    <button class="bg-danger" style="float: right;" onclick="deleteBill('/bill/delete/<%= id[i] %>')">delete</button>
+                                </td>
                             </tr>
-                        <% } %>
+                            <% } %>
                     </tbody>
                 </table>
             </section>
         </main>
         <script>
             document.getElementById('createBillBtn').addEventListener('click', async () => {
-            try {
-                const userId = `<%= userId %>`;
-                const response = await axios.post(`/bill/create/${userId}`);
-                if (response.status === 201) {
-                    alert('Bill created successfully');
-                    window.location.reload(); // Reload the page to show the new bill
+                try {
+                    const userId = `<%= userId %>`;
+                    const response = await axios.post(`/bill/create/${userId}`);
+                    if (response.status === 201) {
+                        alert('Bill created successfully');
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                // alert('Error creating the bill');
+            });
+            document.getElementById('billStatusFilter').addEventListener('change', function () {
+                const selectedStatus = this.value;
+                const rows = document.querySelectorAll('.bill-table tbody tr');
+                rows.forEach(row => {
+                    const status = row.querySelector('td:nth-child(3) a').textContent.trim().toLowerCase();
+                    if (selectedStatus === 'all' || status === selectedStatus) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            async function deleteBill(url){
+                try{
+                    const data = await axios.post(url);
+                    window.location.reload();
+                }catch(err){
+                    alert(err.message)
+                }
             }
-        });
-        document.getElementById('billStatusFilter').addEventListener('change', function () {
-        const selectedStatus = this.value;
-        const rows = document.querySelectorAll('.bill-table tbody tr');
-
-        rows.forEach(row => {
-            const status = row.querySelector('td:nth-child(3) a').textContent.trim().toLowerCase();
-
-            // Show/Hide rows based on the selected status
-            if (selectedStatus === 'all' || status === selectedStatus) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
         </script>
     </div>
 </body>

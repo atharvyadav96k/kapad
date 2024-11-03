@@ -2,53 +2,35 @@ const billSchema = require('../models/billModel');
 const BillCount = require('../models/billCount');
 const Party = require('../models/partyModel');
 const partyModel = require('../models/partyModel');
+const chalanSchema = require('../models/chalanCount');
 
 exports.get = async (req, res) => {
     // console.log(id)
+    const { id } = req.params;
     try {
         const bills = await partyModel.findById(id).populate('bills');
-        return res.status(200).json(bills)
+        console.log(bills)
+        return res.status(200).json(bills);
     } catch (err) {
+        console.log(err)
         return res.status(500).json({ error: err.message });
     }
 }
 
 exports.create = async (req, res) => {
     const { id } = req.params;
-    let no;
+    const { parti, chalanNo, baleNo, Date } = req.params;
     try {
-        const party = await Party.findById(id);
-        if (!party) {
-            return res.status(404).json({
-                error: 'Party not found'
-            });
+        const isParty = await partyModel.findById(parti);
+        if (isParty) {
+            const newBill = billSchema({
+
+            })
+        } else {
+            return res.status(404).json({ message: 'user not found' });
         }
-
-        no = await inBillCount();
-        const newBill = new billSchema({
-            billNumber: no
-        });
-
-        await newBill.save();
-        if (!Array.isArray(party.bills)) {
-            party.bills = [];
-        }
-
-        party.bills.push(newBill._id);
-        await party.save();
-
-        return res.status(201).json({
-            message: "Bill created successfully",
-            bill: newBill
-        });
     } catch (err) {
-
-        if (no) {
-            await deBillCount();
-        }
-        return res.status(500).json({
-            error: err.message
-        });
+        return res.status(500).json({ message: err.message });
     }
 }
 
@@ -85,6 +67,7 @@ exports.status = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
+    console.log(status, id)
     // Check if the status is valid
     if (!(status >= 0 && status <= 2)) {
         return res.status(400).json({
@@ -96,7 +79,6 @@ exports.status = async (req, res) => {
         // Find the bill by ID
         const bill = await billSchema.findById(id);
         if (bill) {
-            // Update the bill status
             bill.billStatus = status;
             await bill.save();
             return res.status(200).json({
@@ -116,6 +98,18 @@ exports.status = async (req, res) => {
     }
 };
 
+exports.pending = async (req, res) => {
+    try {
+        const bills = await billSchema.find(
+            { billStatus: { $in: [0, 1] } }
+        );
+
+        console.log(bills);
+        res.status(200).json({ bills });
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+}
 
 const inBillCount = async () => {
     try {
@@ -135,16 +129,19 @@ const inBillCount = async () => {
     }
 };
 
-const deBillCount = async () => {
+const inChalanNo = async () => {
     try {
-        const count = await BillCount.findOne();
+        const count = await chalanSchema.findOne();
         if (count) {
-            count.count -= 1;
+            count.count += 1;
             await count.save();
             return count.count;
+        } else {
+            const newChalan = new chalanSchema({ count: 1 });
+            await newChalan.save();
+            return newChalan.count;
         }
     } catch (err) {
-        console.error('Error reducing bill count:', err);
-        throw err;
+        return res.status(500).json({message: err.message})
     }
-};
+}

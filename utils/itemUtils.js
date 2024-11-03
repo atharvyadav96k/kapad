@@ -2,7 +2,7 @@ const itemSchema = require('../models/productSchema');
 
 exports.get = async (req, res) => {
     try {
-        const items = await itemSchema.find();
+        const items = await itemSchema.find().select("_id name");
         return res.status(201).json({
             items
         });
@@ -47,6 +47,8 @@ exports.edit = async (req, res) => {
 
 exports.delete = async (req, res) => {
     const { id } = req.params;
+    console.log("Hello")
+    console.log(id)
     try {
         await itemSchema.findByIdAndDelete(id);
         return res.status(203).json({
