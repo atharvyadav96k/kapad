@@ -53,7 +53,7 @@ exports.delete = async (req, res) => {
     try {
         const party = await partySchema.findByIdAndDelete(id);
         if (party) {
-            return res.status(203).json({
+            return res.status(201).json({
                 message: 'user deleted successfully'
             })
         } else {

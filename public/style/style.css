@@ -1,0 +1,38 @@
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.refresh {
+    background-color: #e5e5e5;
+    color: black;
+}
+
+.new-bill {
+    background-color: #333;
+    color: white;
+}
+
+.bill-section h2 {
+    margin-bottom: 20px;
+}
+
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bill-table th,
+.bill-table td {
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+td a{
+    padding: 15px;
+}
+.profile{
+    height: 50px;
+}
