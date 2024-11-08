@@ -1,4 +1,4 @@
-# Kapad Server
+# Kapad Desktop
 ## Sponsored by ANANDKUMAR BHARATKUMAR & COMPANY
 ### Run project
 Install dependencies
