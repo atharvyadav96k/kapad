@@ -5,7 +5,6 @@ exports.getBillData = async (id)=>{
     console.log(bill);
     let data = [];
     let status = bill.billStatus;
-    console.log("status : ", status)
     bill.products.forEach((ele)=>{
         console.log(ele.name)
         ele.quality.forEach((item)=>{
@@ -14,7 +13,8 @@ exports.getBillData = async (id)=>{
                 item: {
                     size: item.size,
                     count: item.count
-                }
+                },
+                remark: ele.remark == undefined ? "" : ele.remark
             })
         })
     });

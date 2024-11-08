@@ -2,10 +2,6 @@ const express = require('express');
 const barcode = express.Router();
 const barcodeGenerate = require('../utils/generateBarcode');
 
-barcode.get('/', async (req, res) => {
-    res.render('barcode');
-});
-
 barcode.post('/', async (req,res)=>{
     const {data, brand} = req.body;
     try {
