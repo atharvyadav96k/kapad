@@ -33,7 +33,6 @@ exports.bill = async (id) => {
         id: ids,
         date,
         billNo,
-        status,
         userId
     };
 };
