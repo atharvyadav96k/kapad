@@ -10,7 +10,6 @@ exports.get = async (req, res) => {
 }
 
 exports.getAll = async (req, res) => {
-
     const page = 1;
     console.log(page)
     console.log("Hello")

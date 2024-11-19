@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chalan View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .button-container {
+            margin-bottom: 20px;
+        }
+        #downloadBtn {
+            padding: 10px 20px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #downloadBtn:hover {
+            background-color: #003d80;
+        }
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Chalan View</h1>
+    </header>
+    <main>
+        <div class="button-container">
+            <button id="downloadBtn">Download Combined Image</button>
+        </div>
+        <div class="canvas-container">
+            <canvas id="myCanvas" width="700" height="990" style="display: none;"></canvas>
+            <canvas id="myCanvas2" width="700" height="990" style="display: none;"></canvas>
+            <canvas id="combinedCanvas" width="1400" height="990"></canvas>
+        </div>
+    </main>
+</body>
+
+    <script>
+        // Data passed from the backend
+        const data = <%- JSON.stringify(data) %>;
+
+        console.log(data); // Debugging: Check the data in the browser console
+
+        // Function to wrap text for long content
+        function wrapTextByCharacters(ctx, text, x, y, maxWidth, lineHeight) {
+            let line = "";
+            for (let i = 0; i < text.length; i++) {
+                const testLine = line + text[i];
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+
+                if (testWidth > maxWidth) {
+                    ctx.fillText(line, x, y);
+                    line = text[i];
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, y);
+        }
+
+        // Draw static structure for product listing
+        function productStructure(ctx) {
+            ctx.fillText(`Party Name: ${data.partyName}`, 10, 80);
+            ctx.fillText("Product Name", 10, 100);
+            ctx.fillText("Count", 220, 100);
+            ctx.fillText("Size", 320, 100);
+            ctx.fillText("Total", 420, 100);
+            ctx.fillText("Remark", 540, 100);
+        }
+
+        // Render product details on the canvas
+        function renderProduct(ctx, product, y) {
+    const lineHeight = 18;
+    let total = 0;
+    let rowStartY = y;
+
+    // Draw the product name
+    wrapTextByCharacters(ctx, product.name, 10, rowStartY, 200, lineHeight);
+
+    // Render each quality item
+    product.quality.forEach((quality, index) => {
+        const rowY = rowStartY + index * lineHeight;
+        ctx.fillText(`${quality.count}`, 220, rowY);
+        ctx.fillText(`${quality.size}`, 320, rowY);
+        const subTotal = quality.count * quality.size;
+        ctx.fillText(`${subTotal}`, 420, rowY);
+        total += subTotal; // Accumulate total for the product
+    });
+    const totalY = rowStartY + product.quality.length * lineHeight;
+    ctx.fillText(`${total}`, 420, totalY);
+    ctx.beginPath();
+    ctx.moveTo(220, totalY-30);
+    ctx.lineTo(320, totalY-30);
+    // Render total for the product
+
+    // Render remark if it exists
+    if (product.remark) {
+        wrapTextByCharacters(ctx, product.remark, 540, rowStartY, 140, lineHeight);
+    }
+
+    // Draw a dividing line below the product
+    const lineY = totalY + lineHeight + 5;
+    ctx.beginPath();
+    ctx.moveTo(10, lineY);
+    ctx.lineTo(690, lineY);
+    ctx.strokeStyle = "grey";
+    ctx.stroke();
+
+    // Return the Y-coordinate for the next product
+    return lineY + 10; // Add padding for the next product
+}
+
+// Draw content on the canvas
+function drawOnCanvas(canvas) {
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, 700, 990); // Clear canvas
+    ctx.fillStyle = "black";
+    ctx.font = "bold 16px Arial";
+    ctx.textBaseline = "top";
+    ctx.textAlign = "center";
+    ctx.fillText("ANANDKUMAR BHARATAKUMAR & COMPANY", 350, 20);
+    ctx.textAlign = "left";
+    ctx.font = "12px Arial";
+    ctx.fillText("Bale No: " + data.baleNo, 10, 50);
+    ctx.fillText("Chalan No: " + data.chalanNo, 550, 50);
+
+    // Static product structure
+    productStructure(ctx);
+
+    // Render products and calculate total of totals
+    let startY = 120;
+    let grandTotal = 0;
+    data.products.forEach((product) => {
+        startY = renderProduct(ctx, product, startY);
+        grandTotal += product.quality.reduce((acc, q) => acc + q.count * q.size, 0);
+    });
+
+    // Render grand total at the bottom
+    // ctx.font = "bold 14px Arial";
+    // ctx.fillText("Grand Total:", 320, startY + 20);
+    // ctx.fillText(`${grandTotal}`, 420, startY + 20);
+}
+
+        // Draw content on both canvases
+        drawOnCanvas(document.getElementById("myCanvas"));
+        drawOnCanvas(document.getElementById("myCanvas2"));
+
+        // Combine both canvases side by side
+        const canvas1 = document.getElementById("myCanvas");
+        const canvas2 = document.getElementById("myCanvas2");
+        const combinedCanvas = document.getElementById("combinedCanvas");
+        const combinedCtx = combinedCanvas.getContext("2d");
+
+        // Draw the first canvas
+        combinedCtx.drawImage(canvas1, 0, 0);
+        // Draw the second canvas to the right of the first
+        combinedCtx.drawImage(canvas2, canvas1.width, 0);
+
+        // Download combined canvas as an image
+        document.getElementById("downloadBtn").addEventListener("click", function () {
+            const link = document.createElement("a");
+            link.download = `chalan_${data.chalanNo || "output"}.png`;
+            link.href = combinedCanvas.toDataURL("image/png");
+            link.click();
+        });
+    </script>
+</html>
