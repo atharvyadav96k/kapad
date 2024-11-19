@@ -48,7 +48,6 @@ app.get('/bill-data/:id', async (req, res) => {
 });
 
 app.get('/getChalanNo', async (req, res) => {
-    console.log("Hello")
     try {
         const count = await billCount.findOne();
         if (count) {
