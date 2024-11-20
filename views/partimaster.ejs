@@ -42,9 +42,11 @@
                 <input type="text" id="searchInput" class="form-control" placeholder="Search by Party Name">
             </div>
             <% data.forEach(item => { %>
-                <li class="list-group-item border p-4" style="margin-top: 5px; border-radius: 10px;">
-                    <strong>Party Name:</strong> <span class="party-name"><%= item.name %></span><br>
-                </li>
+                <a href="/parti-bill-view/<%= item._id %>" style="text-decoration: none;">
+                    <li class="list-group-item border p-4" style="margin-top: 5px; border-radius: 10px;">
+                        <strong>Party Name:</strong> <span class="party-name"><%= item.name %></span><br>
+                    </li>
+                </a>
             <% }) %>
         </ul>
     </div>

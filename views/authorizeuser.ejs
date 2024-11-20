@@ -4,19 +4,124 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap Left Navigation Bar with Mobile Toggle and Search Bar</title>
+    <title>User List with Actions</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .active{
+            background: blue;
+            border-radius: 20px;
+            color: white;
+        }
+        .user-card {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s ease-in-out;
+            
+        }
+
+        .user-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .verified {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: green;
+        }
+
+        .not-verified {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: red;
+        }
+
+        .btn-actions {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
-        Auth
+        <div>
+            <ul class="nav" style="padding-left: 10px; padding-top: 10px;">
+                <li class="nav-item">
+                    <a class="nav-link" href="/new-chalan">New Chalan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/chalan-list">Chalan List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/parti-master">Parti Master</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/inventory-master">Inventory Master</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/authorize-user">Authorize User</a>
+                </li>
+            </ul>
+        </div>
+        <div class="container my-5">
+            <h1 class="text-center mb-4">User List</h1>
+            <div class="row">
+                <% users.map((ele) => { %>
+                <div class="col-md-6 col-lg-4">
+                    <div class="user-card">
+                        <h5 class="mb-2"><%= ele.username %></h5>
+                        <p class="<%= ele.verified ? 'verified' : 'not-verified' %>">
+                            <%= ele.verified ? 'Verified' : 'Not Verified' %>
+                        </p>
+                        <div class="btn-actions">
+                            <button class="btn btn-success btn-sm" onclick="handleAction(this, 'verify', '<%= ele._id %>')">Verify</button>
+                            <button class="btn btn-danger btn-sm" onclick="handleAction(this, 'reject', '<%= ele._id %>')">Reject</button>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+    <script>
+        function handleAction(button, action, userId) {
+            // Disable the button and show loading state
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.textContent = 'Processing...';
+
+            const endpoint = action === 'verify' ? `/u/verify/${userId}` : `/u/reject/${userId}`;
+
+            // Send the request to the server
+            fetch(endpoint, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message || `${action.charAt(0).toUpperCase() + action.slice(1)} action successful!`);
+                    location.reload();  
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('An error occurred. Please try again.');
+                })
+                .finally(() => {
+                    // Re-enable the button and restore its original text
+                    button.disabled = false;
+                    button.textContent = originalText;
+                });
+        }
+    </script>
 </body>
 
 </html>
