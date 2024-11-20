@@ -9,7 +9,7 @@ exports.get = async (req, res) => {
     const { id } = req.params;
     try {
         const bills = await partyModel.findById(id).populate('bills');
-        console.log(bills)
+        // console.log(bills)
         return res.status(200).json(bills);
     } catch (err) {
         console.log(err)
@@ -67,7 +67,7 @@ exports.status = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    console.log(status, id)
+    // console.log(status, id)
     // Check if the status is valid
     if (!(status >= 0 && status <= 2)) {
         return res.status(400).json({
@@ -104,7 +104,7 @@ exports.pending = async (req, res) => {
             { billStatus: { $in: [0, 1] } }
         );
 
-        console.log(bills);
+        // console.log(bills);
         res.status(200).json({ bills });
     } catch (err) {
         res.status(500).json({ error: err.message })

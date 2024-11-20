@@ -47,8 +47,8 @@ exports.edit = async (req, res) => {
 
 exports.delete = async (req, res) => {
     const { id } = req.params;
-    console.log("Hello")
-    console.log(id)
+    // console.log("Hello")
+    // console.log(id)
     try {
         await itemSchema.findByIdAndDelete(id);
         return res.status(203).json({

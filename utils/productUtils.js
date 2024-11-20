@@ -11,9 +11,9 @@ exports.get = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     const page = 1;
-    console.log(page)
-    console.log("Hello")
-    console.log(page)
+    // console.log(page)
+    // console.log("Hello")
+    // console.log(page)
     const limit = 300; 
     try {
         const totalCount = await billSchema.countDocuments();
@@ -23,7 +23,7 @@ exports.getAll = async (req, res) => {
             .skip((page - 1) * limit)
             .limit(limit);
         const reverse = bills.reverse();
-        console.log("sending")
+        // console.log("sending")
         return res.status(200).json({
             data: reverse,
             currentPage: page,
@@ -97,7 +97,7 @@ exports.add = async (req, res) => {
 exports.addremark = async (req, res) => {
     const { id } = req.params;
     const { name, remark } = req.body;
-    console.log(name, remark);
+    // console.log(name, remark);
     try {
         const bill = await billSchema.findById(id);
         if (!bill) {
@@ -109,7 +109,7 @@ exports.addremark = async (req, res) => {
         }
 
         bill.products[productIndex].remark = remark;
-        console.log(bill);
+        // console.log(bill);
 
         await bill.save();
 
@@ -205,10 +205,10 @@ exports.deleteQuality = async (req, res) => {
     const { name, size } = req.body;
     try {
         const bill = await billSchema.findById(id);
-        console.log(bill)
+        // console.log(bill)
         if (bill) {
             let products = bill.products;
-            console.log(products)
+            // console.log(products)
             const productIndex = products.findIndex(product => product.name === name);
             if (productIndex === -1) {
                 return res.status(404).json({

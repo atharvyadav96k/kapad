@@ -48,13 +48,13 @@ router.get('/bills', async (req, res) => {
 
 router.get('/data/:id', async (req, res) => {
     const {id} = req.params;
-    console.log(id)
+    // console.log(id)
     try{
         const data = await Bills.find({partyId: id}).select('-products');
         if(data){
             data.reverse();
         }
-        console.log(data)
+        // console.log(data)
         return res.status(200).json({
             data: data
         });

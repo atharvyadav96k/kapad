@@ -58,7 +58,7 @@ app.get('/getChalanNo', async (req, res) => {
                 date: new Date()
             })
             await newCount.save();
-            console.log(newCount);
+            // console.log(newCount);
             return res.status(200).json({data: {count: 1, date: new Date()}});
         }
     } catch (err) {
