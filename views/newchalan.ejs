@@ -43,25 +43,35 @@
                 <!-- Party Name -->
                 <div class="mb-3">
                     <label for="partyName" class="form-label">Party Name</label>
-                    <input type="text" class="form-control" id="partyName" placeholder="Enter Party Name" required>
+                    <input list="suggestion" type="text" class="form-control" name="partyName" id="partyName"
+                        placeholder="Enter Party Name" required>
+                    <datalist id="suggestion">
+                        <% parti.forEach((ele)=> { %>
+                            <option value="<%= ele.name %>" data-id="<%= ele.id %>">
+                                <%= ele.name %>
+                            </option>
+                            <% }) %>
+                    </datalist>
                 </div>
 
                 <!-- Chalan No -->
-                <div class="mb-3" >
+                <div class="mb-3">
                     <label for="chalanNo" class="form-label" readon>Chalan No</label>
-                    <input readonly type="number" class="form-control" id="chalanNo" placeholder="Enter Chalan Number" required>
+                    <input readonly type="number" name="chalanNo" class="form-control" id="chalanNo"
+                        placeholder="Enter Chalan Number" required>
                 </div>
 
                 <!-- Bale No -->
                 <div class="mb-3">
                     <label for="baleNo" class="form-label">Bale No</label>
-                    <input type="number" class="form-control" id="baleNo" placeholder="Enter Bale Number" required>
+                    <input type="number" class="form-control" name="baleNo" id="baleNo" placeholder="Enter Bale Number"
+                        required>
                 </div>
 
                 <!-- Date -->
                 <div class="mb-3">
                     <label for="date" class="form-label">Date</label>
-                    <input type="date" class="form-control" id="date" required>
+                    <input type="date" name="date" class="form-control" id="date" required>
                 </div>
 
                 <!-- Submit Button -->
@@ -86,6 +96,57 @@
             }
         }
         data();
+        const form = document.getElementById('form');
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const partyName = e.target.partyName.value;
+            const chalanNo = e.target.chalanNo.value;
+            const baleNo = e.target.baleNo.value;
+            const date = e.target.date.value;
+
+            // Find the selected option in the datalist
+            const suggestion = document.getElementById("suggestion");
+            const selectedOption = Array.from(suggestion.options).find(option => option.value === partyName);
+
+            const partyId = selectedOption ? selectedOption.dataset.id : null;
+
+            if (!partyId) {
+                alert("Invalid Party Name selected. Please choose from the suggestions.");
+                return;
+            }
+
+            try {
+                const res = await fetch('/bill/bills', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ id: partyId, partyName, chalanNo, baleNo, date }),
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json(); // Parse the error response
+                    if (errorData.code === 11000) {
+                        alert("Duplication error: This entry already exists.");
+                    } else {
+                        alert(`Server error: ${errorData.message || res.status}`);
+                    }
+                    return;
+                }
+
+                const data = await res.json();
+                alert("Chalan created successfully!");
+                console.log(data); // Optional: Log response data
+            } catch (err) {
+                console.error(err);
+                alert("Duplication error");
+            }
+        });
+
+
+
     </script>
 </body>
 
