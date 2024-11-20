@@ -10,14 +10,14 @@ view.get('/', (req, res)=>{
 });
 view.get('/new-chalan',async (req, res)=>{
     const parti = await partiSchema.find().select("_id name");
-    console.log(parti)
+    // console.log(parti)
     res.render("newchalan", {parti})
 });
 view.get('/chalan-list', async (req, res)=>{
     let data = [];
     try{
         data = (await billSchema.find().select("-products")).reverse();
-        console.log(data);
+        // console.log(data);
         res.render("chalanlist", {data});
     }catch(err){
         res.render("error");
@@ -28,7 +28,7 @@ view.get("/parti-master", async (req, res)=>{
     let data = []
     try{
         data = await partiSchema.find().select("-bills");
-        console.log(data);
+        // console.log(data);
         res.render("partimaster", {data});
     }catch(err){
         res.render("error");
@@ -36,10 +36,15 @@ view.get("/parti-master", async (req, res)=>{
 });
 view.get("/chalan-view/:id", async (req, res)=>{
     const {id} = req.params;
-    console.log(id)
+    try{
+        // console.log(id)
     const data = await billSchema.findOne({_id: id}).select("products chalanNo baleNo date partyName");
-    console.log(data);
+    // console.log(data);
     res.render("chalanview",{data})
+    }catch(err){
+        res.render("error")
+    }
+    
 })
 view.get("/inventory-master", async (req, res)=>{
     let data = [];
@@ -53,7 +58,7 @@ view.get("/inventory-master", async (req, res)=>{
 view.get("/authorize-user", async (req, res)=>{
     try{
         const users = await userSchema.find().select("-password");
-        console.log(users);
+        // console.log(users);
         res.render("authorizeuser", {users});
     }catch(err){
 
@@ -63,7 +68,7 @@ view.get('/parti-bill-view/:id', async (req, res)=>{
     const {id} = req.params;
     try{
         const data = await billSchema.find({partyId: id}).select("-products");
-        console.log(data);
+        // console.log(data);
         res.render("partibills", {data});
     }catch(err){
         console.log(err.message);
