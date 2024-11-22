@@ -130,14 +130,16 @@
                     <p style="text-align: right;">(<%= copyname %>)</p>
                     <div>
                         <h1 style="text-align: center; line-height: 2px;">ANANDKUMAR BHRATAKUMAR & COMPANY </h1>
-                            <h1 style="text-align: center; line-height: 15px;">SHREYASH TEXTILE MILLS</h1>
-                        </div>
+                        <h1 style="text-align: center; line-height: 15px;">SHREYASH TEXTILE MILLS</h1>
+                    </div>
                     <div>
                         <span style="font-weight: 900;"><strong>Bale No: <%- data.baleNo %></strong></span>
                         <span style="float: right; font-weight: bold;"><strong>Chalan No: <%- data.chalanNo
                                     %></strong></span>
                     </div>
-                    <strong><p>Parti Name: <%- data.partyName %></p></strong>
+                    <strong>
+                        <p>Parti Name: <%- data.partyName %></p>
+                    </strong>
                     <table class="table">
                         <thead>
                             <tr>
@@ -167,12 +169,9 @@
                                                                         <!-- Empty cell for subsequent qualities -->
                                                                         <% } %>
                                                                             <td><%- quality.count %></td>
-                                                                            <td><%- 
-                                                                                    quality.size %></td>
+                                                                            <td><%- quality.size %></td>
                                                                             <!-- Use fixed sizes -->
-                                                                            <td><%- quality.count *
-                                                                                    
-                                                                                    quality.size %></td>
+                                                                            <td><%- quality.count * quality.size %></td>
                                                                             <!-- Calculate total with fixed sizes -->
 
                                                                             <% if (!remarkDisplayed) { %>
@@ -185,11 +184,10 @@
                                                             </tr>
                                                             <% isFirstQuality=false; %>
                                                                 <!-- Set the flag to false after first quality -->
-                                                                <% countTotal +=quality.count; sizeTotal
-                                                                    +=(fixedSizes[sizeIndex] || quality.size); total
-                                                                    +=quality.count * (fixedSizes[sizeIndex] ||
-                                                                    quality.size); %>
-                                                                    <% sizeIndex++; %>
+                                                                <% countTotal +=quality.count;
+                                                                 sizeTotal += quality.size;
+                                                                  total +=quality.count *  quality.size; %>
+                                                                <% sizeIndex++; %>
                                                                         <!-- Increment the sizeIndex for next quality -->
                                                                         <% }) %>
                                                                             <tr class="total-row">
@@ -210,10 +208,10 @@
                         <span>Total MTR: <%- overallTotal %></span>
                     </div>
                 </div>
-            <% } %>
-            <% renderContent(data, "Party Copy"); %>
-            <hr style="border-style: dashed;margin: 2px;">
-            <% renderContent(data, "Office Copy"); %>
+                <% } %>
+                    <% renderContent(data, "Party Copy" ); %>
+                        <hr style="border-style: dashed;margin: 2px;">
+                        <% renderContent(data, "Office Copy" ); %>
         </div>
     </div>
     <script>
