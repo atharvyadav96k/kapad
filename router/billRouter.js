@@ -83,7 +83,7 @@ router.put('/bills/:id', async (req, res) => {
 });
 
 
-router.delete('/bills/:id', async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
