@@ -39,7 +39,7 @@ view.get("/chalan-view/:id", async (req, res)=>{
     try{
         // console.log(id)
     const data = await billSchema.findOne({_id: id}).select("products chalanNo baleNo date partyName");
-    // console.log(data);
+    console.log(data);
     res.render("chalanview",{data})
     }catch(err){
         res.render("error")
