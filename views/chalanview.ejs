@@ -9,7 +9,6 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
             color: #333;
         }
         header {
@@ -32,7 +31,9 @@
         .button-container {
             margin-bottom: 20px;
         }
-        #downloadBtn {
+        .downloadBtn {
+            margin: 10px;
+            float: right;
             padding: 10px 20px;
             background-color: #0056b3;
             color: white;
@@ -42,182 +43,215 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        #downloadBtn:hover {
+        .downloadBtn:hover {
             background-color: #003d80;
         }
-        .canvas-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+        .content-container {
+            width: 100%;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
-        canvas {
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
             border: 1px solid #ccc;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 4px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f4f4f4;
+        }
+        .total-row {
+            font-weight: bold;
+        }
+        .total-summary {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        @media print {
+            /* Ensure the table is styled for printing */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f4f4f4;
+            }
+            .button-container {
+                display: none; /* Hide the print button during printing */
+            }
         }
     </style>
 </head>
 <body>
-    <header>
+    <header id="h">
         <h1>Chalan View</h1>
     </header>
-    <main>
-        <div class="button-container">
-            <button id="downloadBtn">Download Combined Image</button>
+    <button id="btn" class="downloadBtn" onclick="printContent()">print</button>
+    <div id="print">
+        <div style="display: flex;">
+            <% function renderContent(data) { %> 
+                <div style="width: 50%; font-size: 10px; padding-left: 2px; padding-right: 2px;">
+                    <h1 style="text-align: center;">ANANDKUMAR BHRATAKUMAR & COMPANY </h1>
+                    <div>
+                        <span>Bale No: <%- data.baleNo %></span>
+                        <span style="float: right;">Chalan No: <%- data.chalanNo %></span>
+                    </div>
+                    <p>Party Name: <%- data.partyName %></p>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Count</th>
+                                <th>Size</th>
+                                <th>Total</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% let overallCountTotal = 0; let overallSizeTotal = 0; let overallTotal = 0; %>
+                            <% data.products.forEach(function(product) { %>
+                                <% let countTotal = 0, sizeTotal = 0, total = 0; %>
+                                <% let isFirstQuality = true; %> <!-- Flag to track first quality entry -->
+                                <% let remarkDisplayed = false; %> <!-- Flag to track if remark is displayed -->
+                                <% let fixedSizes = [10, 10, 15, 20]; %> <!-- Fixed size percentages -->
+                                <% let sizeIndex = 0; %> <!-- Index for the size array -->
+                                <% product.quality.forEach(function(quality) { %>
+                                    <tr>
+                                        <% if (isFirstQuality) { %>
+                                            <td><%- product.name %></td> <!-- Display product name only once -->
+                                        <% } else { %>
+                                            <td></td> <!-- Empty cell for subsequent qualities -->
+                                        <% } %>
+                                        <td><%- quality.count %></td>
+                                        <td><%- fixedSizes[sizeIndex] || quality.size %></td> <!-- Use fixed sizes -->
+                                        <td><%- quality.count * (fixedSizes[sizeIndex] || quality.size) %></td> <!-- Calculate total with fixed sizes -->
+                                        
+                                            <% if (!remarkDisplayed) { %>
+                                                <td>
+                                                <%- product.remark || '' %> <!-- Display remark only once -->
+                                                <% remarkDisplayed = true; %>
+                                            </td>
+                                            <% } %>
+                                    </tr>
+                                    <% isFirstQuality = false; %> <!-- Set the flag to false after first quality -->
+                                    <% countTotal += quality.count; sizeTotal += (fixedSizes[sizeIndex] || quality.size); total += quality.count * (fixedSizes[sizeIndex] || quality.size); %>
+                                    <% sizeIndex++; %> <!-- Increment the sizeIndex for next quality -->
+                                <% }) %>
+                                <tr class="total-row">
+                                    <td>Total</td>
+                                    <td><%- countTotal %></td>
+                                    <td><%- sizeTotal %></td>
+                                    <td><%- total %></td>
+                                    <td></td>
+                                </tr>
+                                <% overallCountTotal += countTotal; overallSizeTotal += sizeTotal; overallTotal += total; %>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                    <div class="total-summary">
+                        <span>Total Count: <%- overallCountTotal %></span>
+                        <span>Total Size: <%- overallSizeTotal %></span>
+                        <span>Total: <%- overallTotal %></span>
+                    </div>
+                </div>
+            <% } %>
+            <% renderContent(data); %> 
+            <hr style="border-style: dashed;margin: 2px;">
+            <% function renderContent(data) { %> 
+                <div style="width: 50%; font-size: 10px; padding-left: 2px; padding-right: 2px;">
+                    <h1 style="text-align: center;">ANANDKUMAR BHRATAKUMAR & COMPANY </h1>
+                    <div>
+                        <span>Bale No: <%- data.baleNo %></span>
+                        <span style="float: right;">Chalan No: <%- data.chalanNo %></span>
+                    </div>
+                    <p>Party Name: <%- data.partyName %></p>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Count</th>
+                                <th>Size</th>
+                                <th>Total</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% let overallCountTotal = 0; let overallSizeTotal = 0; let overallTotal = 0; %>
+                            <% data.products.forEach(function(product) { %>
+                                <% let countTotal = 0, sizeTotal = 0, total = 0; %>
+                                <% let isFirstQuality = true; %> <!-- Flag to track first quality entry -->
+                                <% let remarkDisplayed = false; %> <!-- Flag to track if remark is displayed -->
+                                <% let fixedSizes = [10, 10, 15, 20]; %> <!-- Fixed size percentages -->
+                                <% let sizeIndex = 0; %> <!-- Index for the size array -->
+                                <% product.quality.forEach(function(quality) { %>
+                                    <tr>
+                                        <% if (isFirstQuality) { %>
+                                            <td><%- product.name %></td> <!-- Display product name only once -->
+                                        <% } else { %>
+                                            <td></td> <!-- Empty cell for subsequent qualities -->
+                                        <% } %>
+                                        <td><%- quality.count %></td>
+                                        <td><%- fixedSizes[sizeIndex] || quality.size %></td> <!-- Use fixed sizes -->
+                                        <td><%- quality.count * (fixedSizes[sizeIndex] || quality.size) %></td> <!-- Calculate total with fixed sizes -->
+                                        
+                                            <% if (!remarkDisplayed) { %>
+                                                <td>
+                                                <%- product.remark || '' %> <!-- Display remark only once -->
+                                                <% remarkDisplayed = true; %>
+                                            </td>
+                                            <% } %>
+                                    </tr>
+                                    <% isFirstQuality = false; %> <!-- Set the flag to false after first quality -->
+                                    <% countTotal += quality.count; sizeTotal += (fixedSizes[sizeIndex] || quality.size); total += quality.count * (fixedSizes[sizeIndex] || quality.size); %>
+                                    <% sizeIndex++; %> <!-- Increment the sizeIndex for next quality -->
+                                <% }) %>
+                                <tr class="total-row">
+                                    <td>Total</td>
+                                    <td><%- countTotal %></td>
+                                    <td><%- sizeTotal %></td>
+                                    <td><%- total %></td>
+                                    <td></td>
+                                </tr>
+                                <% overallCountTotal += countTotal; overallSizeTotal += sizeTotal; overallTotal += total; %>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                    <div class="total-summary">
+                        <span>Total Count: <%- overallCountTotal %></span>
+                        <span>Total Size: <%- overallSizeTotal %></span>
+                        <span>Total: <%- overallTotal %></span>
+                    </div>
+                </div>
+            <% } %>
+            <% renderContent(data); %> 
         </div>
-        <div class="canvas-container">
-            <canvas id="myCanvas1" width="700" height="990" style="display: none;"></canvas>
-            <canvas id="myCanvas2" width="700" height="990" style="display: none;"></canvas>
-            <canvas id="combinedCanvas1" width="1400" height="990"></canvas>
-        </div>
-        <div class="canvas-container">
-            <canvas id="myCanvas2" width="700" height="990" style="display: none;"></canvas>
-            <canvas id="myCanvas3" width="700" height="990" style="display: none;"></canvas>
-            <canvas id="combinedCanvas1" width="1400" height="990"></canvas>
-        </div>
-    </main>
+    </div>
+    <script>
+        function printContent() {
+            const h = document.getElementById("h");
+            const btn = document.getElementById("btn");
+            h.style.display = "none";
+            btn.style.display = "none"
+            window.print();
+             h.style.display = "";
+            btn.style.display = "none"
+        }
+    </script>
 </body>
-
-<script>
-    const data = <%- JSON.stringify(data) %>;
-
-    function wrapTextByCharacters(ctx, text, x, y, maxWidth, lineHeight) {
-        let line = "";
-        for (let i = 0; i < text.length; i++) {
-            const testLine = line + text[i];
-            const metrics = ctx.measureText(testLine);
-            const testWidth = metrics.width;
-
-            if (testWidth > maxWidth) {
-                ctx.fillText(line, x, y);
-                line = text[i];
-                y += lineHeight;
-            } else {
-                line = testLine;
-            }
-        }
-        ctx.fillText(line, x, y);
-    }
-
-    function productStructure(ctx) {
-        ctx.fillText(`Party Name: ${data.partyName}`, 10, 65);
-        ctx.fillText("Product Name", 10, 85);
-        ctx.fillText("Count", 220, 85);
-        ctx.fillText("Size", 320, 85);
-        ctx.fillText("Total", 420, 85);
-        ctx.fillText("Remark", 540, 85);
-    }
-
-    function renderProduct(ctx, product, y) {
-        const lineHeight = 14;
-        let rowStartY = y;
-
-        wrapTextByCharacters(ctx, product.name, 10, rowStartY, 200, lineHeight);
-
-        let countTotal = 0;
-        let sizeTotal = 0;
-        let total = 0;
-
-        product.quality.forEach((quality, index) => {
-            const rowY = rowStartY + index * lineHeight;
-            ctx.fillText(`${quality.count}`, 220, rowY);
-            ctx.fillText(`${quality.size}`, 320, rowY);
-            const subTotal = quality.count * quality.size;
-            ctx.fillText(`${subTotal}`, 420, rowY);
-            ctx.beginPath();
-            ctx.moveTo(220, rowY + lineHeight - 2);
-            ctx.lineTo(520, rowY + lineHeight - 2);
-            ctx.strokeStyle = "gray";
-            ctx.stroke();
-            countTotal += quality.count;
-            sizeTotal += quality.size;
-            total += subTotal;
-            if(rowY > 900){
-                ctx
-            }
-        });
-        const totalY = rowStartY + product.quality.length * lineHeight + 5;
-        ctx.font = "bold 12px Arial italic"; // Make totals row bold
-        ctx.fillText("Total:", 10, totalY);
-        ctx.fillText(`${countTotal}`, 220, totalY);
-        ctx.fillText(`${sizeTotal}`, 320, totalY);
-        ctx.fillText(`${total}`, 420, totalY);
-
-        ctx.fillStyle = "black"; // Reset color for the next rows
-        ctx.font = "11px Arial"; // Reset font
-
-        // Render remark if available
-        if (product.remark) {
-            wrapTextByCharacters(ctx, product.remark, 540, rowStartY, 140, lineHeight);
-        }
-
-        // Draw a dividing line below the totals row
-        const lineY = totalY + lineHeight + 5;
-        ctx.beginPath();
-        ctx.moveTo(10, lineY);
-        ctx.lineTo(620, lineY);
-        ctx.strokeStyle = "grey";
-        ctx.stroke();
-
-        return lineY + 10; // Return the next starting Y-coordinate
-    }
-
-    function drawOnCanvas(canvas) {
-        const ctx = canvas.getContext("2d");
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, 700, 990);
-        ctx.fillStyle = "black";
-        ctx.font = "bold 16px Arial";
-        ctx.textBaseline = "top";
-        ctx.textAlign = "center";
-        ctx.fillText("ANANDKUMAR BHARATAKUMAR & COMPANY", 350, 20);
-        ctx.textAlign = "left";
-        ctx.font = "11px Arial";
-        ctx.fillText("Bale No: " + data.baleNo, 10, 50);
-        ctx.fillText("Chalan No: " + data.chalanNo, 550, 50);
-
-        productStructure(ctx);
-
-        let startY = 100;
-        let grandTotal = 0;
-        let overallCountTotal = 0;
-        let overallSizeTotal = 0;
-        let overallTotal = 0;
-
-        data.products.forEach((product) => {
-            startY = renderProduct(ctx, product, startY);
-            product.quality.forEach((quality) => {
-                overallCountTotal += quality.count;
-                overallSizeTotal += quality.size;
-                overallTotal += quality.count * quality.size;
-            });
-        });
-
-        // Add overall totals at the bottom
-        const overallTotalY = startY + 10;
-        ctx.font = "bold 12px Arial italic";
-        ctx.fillText("Total     :", 10, overallTotalY);
-        ctx.fillText(`${overallCountTotal}`, 220, overallTotalY);
-        ctx.fillText(`${overallSizeTotal}`, 320, overallTotalY);
-        ctx.fillText(`${overallTotal}`, 420, overallTotalY);
-    }
-
-    drawOnCanvas(document.getElementById("myCanvas1"));
-    drawOnCanvas(document.getElementById("myCanvas2"));
-
-    const canvas1 = document.getElementById("myCanvas1");
-    const canvas2 = document.getElementById("myCanvas2");
-    const combinedCanvas = document.getElementById("combinedCanvas1");
-    const combinedCtx = combinedCanvas.getContext("2d");
-
-    combinedCtx.drawImage(canvas1, 0, 0);
-    combinedCtx.drawImage(canvas2, canvas1.width, 0);
-
-    document.getElementById("downloadBtn").addEventListener("click", function () {
-        const link = document.createElement("a");
-        link.download = `chalan_${data.chalanNo || "output"}.png`;
-        link.href = combinedCanvas.toDataURL("image/png");
-        link.click();
-    });
-</script>
 </html>
