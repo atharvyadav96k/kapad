@@ -74,6 +74,15 @@ view.get('/parti-bill-view/:id', async (req, res)=>{
         console.log(err.message);
         res.render("error");
     }
-})
+});
 
+view.get('/barcode', async (req, res)=>{
+    try{
+        const parti = await inventorySchema.find(); 
+        console.log(parti)
+        res.render("Barcode", {parti})
+    }catch(err){
+        res.render("error")
+    }
+})
 module.exports = view;
