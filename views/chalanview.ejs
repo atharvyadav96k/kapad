@@ -171,7 +171,7 @@
                                                                             <td><%- quality.count %></td>
                                                                             <td><%- quality.size %></td>
                                                                             <!-- Use fixed sizes -->
-                                                                            <td><%- quality.count * quality.size %></td>
+                                                                            <td><%- (quality.count * quality.size).toFixed(2) %></td>
                                                                             <!-- Calculate total with fixed sizes -->
 
                                                                             <% if (!remarkDisplayed) { %>
@@ -192,9 +192,9 @@
                                                                         <% }) %>
                                                                             <tr class="total-row">
                                                                                 <td>Total</td>
-                                                                                <td><%- countTotal %></td>
-                                                                                <td><%- sizeTotal %></td>
-                                                                                <td><%- total %></td>
+                                                                                <td><%- countTotal.toFixed(2) %></td>
+                                                                                <td></td>
+                                                                                <td><%- total.toFixed(2) %></td>
                                                                                 <td></td>
                                                                             </tr>
                                                                             <% overallCountTotal +=countTotal;
@@ -204,8 +204,8 @@
                         </tbody>
                     </table>
                     <div class="total-summary">
-                        <span>Total Taga: <%- overallCountTotal %></span>
-                        <span>Total MTR: <%- overallTotal %></span>
+                        <span>Total Taga: <%- overallCountTotal.toFixed(2) %></span>
+                        <span>Total MTR: <%- overallTotal.toFixed(2) %></span>
                     </div>
                 </div>
                 <% } %>

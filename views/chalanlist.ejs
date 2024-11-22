@@ -14,6 +14,16 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        .delete-btn {
+            width: 100px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
         .nav-link:hover {
             background-color: #0056b3;
             color: white;
@@ -85,23 +95,33 @@
         </div>
 
         <ul class="list-group mt-3" id="dataList">
-            <% data.forEach(item => { %>
-                <a href="/chalan-view/<%= item._id %>" style="text-decoration: none;">
-                    <li class="list-group-item">
+            <% data.forEach(item=> { %>
+                <li class="list-group-item" >
+                    <a href="/chalan-view/<%= item._id %>" style="text-decoration: none;">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <strong>Parti Name:</strong> <span class="party-name"><%= item.partyName %></span><br>
-                                <strong>Chalan No:</strong> <span class="chalan-no"><%= item.chalanNo %></span><br>
-                                <strong>Bale No:</strong> <%= item.baleNo %>
+                                <strong>Parti Name:</strong> <span class="party-name">
+                                    <%= item.partyName %>
+                                </span><br>
+                                <strong>Chalan No:</strong> <span class="chalan-no">
+                                    <%= item.chalanNo %>
+                                </span><br>
+                                <strong>Bale No:</strong>
+                                <%= item.baleNo %>
                             </div>
                             <div class="text-end">
-                                <strong>Date:</strong> <%= new Date(item.date).toLocaleDateString() %><br>
-                                <strong>Year:</strong> <%= item.year %>
+                                <strong>Date:</strong>
+                                <%= new Date(item.date).toLocaleDateString() %><br>
+                                    <strong>Year:</strong>
+                                    <%= item.year %>
                             </div>
                         </div>
-                    </li>
-                </a>
-            <% }) %>
+                    </a>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button class="delete-btn" onclick="deleteChalan('<%= item._id %>')">Delete</button>
+                    </div>
+                </li>
+                <% }) %>
         </ul>
     </div>
 
@@ -124,10 +144,30 @@
                 }
             });
         });
+        function deleteChalan(id) {
+            if (confirm("Are you sure you want to delete this Chalan?")) {
+                fetch(`/bill/delete/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Chalan deleted successfully.');
+                        location.reload(); // Reload the page to update the list
+                    } else {
+                        alert('Failed to delete Chalan.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('An error occurred while deleting the Chalan.');
+                });
+            }
+        }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 </body>
+
 </html>
