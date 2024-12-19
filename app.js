@@ -70,15 +70,15 @@ app.get('/getChalanNo', async (req, res) => {
 app.get('/getBaleNo', async (req, res) => {
     try {
         const count = await baleCount.findOne();
+        console.log(count);
         if (count) {
             return res.status(200).json({ data: count });
         }else{
-            const newCount = new billCount({
+            const newCount = new baleCount({
                 count: 1,
                 date: new Date()
             })
             await newCount.save();
-            // console.log(newCount);
             return res.status(200).json({data: {count: 1, date: new Date()}});
         }
     } catch (err) {
