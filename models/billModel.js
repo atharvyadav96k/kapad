@@ -7,8 +7,8 @@ const getFinancialYear = () => {
 };
 
 const itemSchema = new mongoose.Schema({
-  partyId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  partyName: { type: String, required: true },
+  partyId: { type: mongoose.Schema.Types.ObjectId},
+  partyName: { type: String},
   chalanNo: { type: Number },
   baleNo: { type: Number },
   date: { type: Date, default: Date.now },

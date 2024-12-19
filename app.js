@@ -14,6 +14,7 @@ const billDataUtil = require('./utils/billgetdata');
 const barcode = require('./utils/generateBarcode');
 const barcodeRouter = require('./router/barcodeRouter');
 const billCount = require('./models/billCount');
+const baleCount = require('./models/baleNoCount');
 const viewRouter = require('./router/viewRouter')
 
 const database = require('./connections/mongooseConnect');
@@ -50,6 +51,25 @@ app.get('/bill-data/:id', async (req, res) => {
 app.get('/getChalanNo', async (req, res) => {
     try {
         const count = await billCount.findOne();
+        if (count) {
+            return res.status(200).json({ data: count });
+        }else{
+            const newCount = new billCount({
+                count: 1,
+                date: new Date()
+            })
+            await newCount.save();
+            // console.log(newCount);
+            return res.status(200).json({data: {count: 1, date: new Date()}});
+        }
+    } catch (err) {
+        console.log(err.message)
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+})
+app.get('/getBaleNo', async (req, res) => {
+    try {
+        const count = await baleCount.findOne();
         if (count) {
             return res.status(200).json({ data: count });
         }else{
