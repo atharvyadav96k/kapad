@@ -96,6 +96,20 @@
                 document.getElementById('chalanNo').value = result.data.count
             } else {
                 console.error("Failed to fetch Chalan No");
+                document.getElementById('baleNo').removeAttribute('readonly');
+                document.getElementById('baleNo').value = result.data.count;
+            }
+            const res = await fetch('/getBaleNo');
+            const baleNoInput = document.getElementById('baleNo');
+            if (res.ok) {
+                const result = await res.json();
+                console.log(result.data.count);
+                baleNoInput.removeAttribute('readonly');
+                baleNoInput.value = result.data.count;
+            } else {
+                console.error("Failed to fetch Chalan No");
+                baleNoInput.removeAttribute('readonly');
+                baleNoInput.value = '';
             }
         }
         data();
