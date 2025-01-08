@@ -108,7 +108,7 @@ exports.generateBarCodePage = async (data) => {
     // Save the final canvas with all QR codes drawn
     const buffer = canvas.toBuffer('image/png');
     const outputPath = 'barcode_page_with_qr_codes.png';
-    fs.writeFileSync(outputPath, buffer);
+    // fs.writeFileSync(outputPath, buffer);
 
     console.log(`Barcode page saved as ${outputPath}`);
     return buffer;
