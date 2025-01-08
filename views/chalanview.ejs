@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chalan View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .button-container {
+            margin-bottom: 20px;
+        }
+
+        .downloadBtn {
+            margin: 10px;
+            float: right;
+            padding: 10px 20px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .downloadBtn:hover {
+            background-color: #003d80;
+        }
+
+        .content-container {
+            width: 100%;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 11px;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ccc;
+            padding: 4px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+        }
+
+        .total-row {
+            font-weight: bold;
+        }
+
+        .total-summary {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        @media print {
+
+            /* Ensure the table is styled for printing */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+
+            th,
+            td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+
+            th {
+                background-color: #f4f4f4;
+            }
+
+            .button-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header id="h">
+        <h1>Chalan View</h1>
+    </header>
+    <button id="btn" class="downloadBtn" onclick="printContent()">print</button>
+    <div id="print">
+        <div style="display: flex;">
+            <% function renderContent(data, copyname) { %>
+                <div style="width: 50%; font-size: 10px; padding-left: 2px; padding-right: 2px;">
+                    <p style="text-align: right;">(<%= copyname %>)</p>
+                    <div>
+                        <h1 style="text-align: center; line-height: 2px;">ANANDKUMAR BHRATAKUMAR & COMPANY </h1>
+                        <h1 style="text-align: center; line-height: 15px;">SHREYASH TEXTILE MILLS</h1>
+                    </div>
+                    <div>
+                        <span style="font-weight: 900;"><strong>Bale No: <%- data.baleNo %></strong></span>
+                        <span style="float: right; font-weight: bold;"><strong>Chalan No: <%- data.chalanNo
+                                    %></strong></span>
+                    </div>
+                    <strong>
+                        <p>Party Name: <%- data.partyName %></p>
+                    </strong>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Taga</th>
+                                <th>Size</th>
+                                <th>Total MTR</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% let overallCountTotal=0; let overallSizeTotal=0; let overallTotal=0; %>
+                                <% data.products.forEach(function(product) { %>
+                                    <% let countTotal=0, sizeTotal=0, total=0; %>
+                                        <% let isFirstQuality=true; %> <!-- Flag to track first quality entry -->
+                                            <% let remarkDisplayed=false; %>
+                                                <!-- Flag to track if remark is displayed -->
+                                                <% let fixedSizes=[10, 10, 15, 20]; %> <!-- Fixed size percentages -->
+                                                    <% let sizeIndex=0; %> <!-- Index for the size array -->
+                                                        <% product.quality.forEach(function(quality) { %>
+                                                            <tr>
+                                                                <% if (isFirstQuality) { %>
+                                                                    <td><%- product.name %></td>
+                                                                    <!-- Display product name only once -->
+                                                                    <% } else { %>
+                                                                        <td></td>
+                                                                        <!-- Empty cell for subsequent qualities -->
+                                                                        <% } %>
+                                                                            <td><%- quality.count %></td>
+                                                                            <td><%- quality.size %></td>
+                                                                            <!-- Use fixed sizes -->
+                                                                            <td><%- (quality.count * quality.size).toFixed(2) %></td>
+                                                                            <!-- Calculate total with fixed sizes -->
+
+                                                                            <% if (!remarkDisplayed) { %>
+                                                                                <td>
+                                                                                    <%- product.remark || '' %>
+                                                                                        <!-- Display remark only once -->
+                                                                                        <% remarkDisplayed=true; %>
+                                                                                </td>
+                                                                                <% } %>
+                                                            </tr>
+                                                            <% isFirstQuality=false; %>
+                                                                <!-- Set the flag to false after first quality -->
+                                                                <% countTotal +=quality.count;
+                                                                 sizeTotal += quality.size;
+                                                                  total +=quality.count *  quality.size; %>
+                                                                <% sizeIndex++; %>
+                                                                        <!-- Increment the sizeIndex for next quality -->
+                                                                        <% }) %>
+                                                                            <tr class="total-row">
+                                                                                <td>Total</td>
+                                                                                <td><%- countTotal.toFixed(2) %></td>
+                                                                                <td></td>
+                                                                                <td><%- total.toFixed(2) %></td>
+                                                                                <td></td>
+                                                                            </tr>
+                                                                            <% overallCountTotal +=countTotal;
+                                                                                overallSizeTotal +=sizeTotal;
+                                                                                overallTotal +=total; %>
+                                                                                <% }) %>
+                        </tbody>
+                    </table>
+                    <div class="total-summary">
+                        <span>Total Taga: <%- overallCountTotal.toFixed(2) %></span>
+                        <span>Total MTR: <%- overallTotal.toFixed(2) %></span>
+                    </div>
+                </div>
+                <% } %>
+                    <% renderContent(data, "Party Copy" ); %>
+                        <hr style="border-style: dashed;margin: 2px;">
+                        <% renderContent(data, "Office Copy" ); %>
+        </div>
+    </div>
+    <script>
+        function printContent() {
+            const h = document.getElementById("h");
+            const btn = document.getElementById("btn");
+            h.style.display = "none";
+            btn.style.display = "none"
+            window.print();
+            h.style.display = "";
+            btn.style.display = "none"
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+/* General reset for margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+}
+
+/* Container to center content */
+.container {
+    text-align: center;
+}
+
+/* Styling for the error code */
+h1 {
+    font-size: 10rem;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+/* Styling for the error message */
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+}
+
+/* Button styling */
+a.btn {
+    padding: 15px 30px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+}
+
+a.btn:hover {
+    background-color: #0056b3;
+}

@@ -1,0 +1,32 @@
+
+
+.donut-chart {
+    width: 300px;
+    height: 300px;
+    position: relative;
+    border-radius: 50%;
+    /* Creates the donut slices */
+    overflow: hidden;
+}
+
+.donut-chart::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    width: 70%; /* Adjust this for the size of the inner hole */
+    height: 70%; /* Adjust this for the size of the inner hole */
+    border-radius: 50%;
+    background-color: #212529; /* Matches the background color to create the empty center */
+}
+
+.donut-chart::after {
+    content: "" ;
+    position: absolute;
+    top: 90px; /* Adjust for positioning */
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #dc3545;
+    font-weight: bold;
+}
