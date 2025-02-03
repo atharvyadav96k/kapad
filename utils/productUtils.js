@@ -8,28 +8,20 @@ exports.get = async (req, res) => {
         res.status(500).json({message: err.message})
     }
 }
-
 exports.getAll = async (req, res) => {
-    const page = 1;
-    // console.log(page)
-    // console.log("Hello")
-    // console.log(page)
-    const limit = 300; 
     try {
         const totalCount = await billSchema.countDocuments();
         const bills = await billSchema
             .find()
             .select("id partyName chalanNo baleNo date")
-            .skip((page - 1) * limit)
-            .limit(limit);
-        const reverse = bills.reverse();
-        // console.log("sending")
+            .sort({ date: -1 }); 
+
         return res.status(200).json({
-            data: reverse,
-            currentPage: page,
+            data: bills,
+            totalCount, 
         });
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: "Failed to fetch bills: " + err.message });
     }
 };
 
@@ -95,9 +87,12 @@ exports.add = async (req, res) => {
 };
 
 exports.addremark = async (req, res) => {
+    console.log("Hello")
     const { id } = req.params;
     const { name, remark } = req.body;
-    // console.log(name, remark);
+    console.log("Remark")
+    console.log(id);
+    console.log(name, remark);
     try {
         const bill = await billSchema.findById(id);
         if (!bill) {
