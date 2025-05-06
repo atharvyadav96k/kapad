@@ -38,7 +38,7 @@ app.use('/party', partyRouter);
 app.use('/bill', billRouter);
 app.use('/product', productRouter);
 app.use('/item', itemRouter);
-app.use('/barcode', barcodeRouter);
+// app.use('/barcode', barcodeRouter);
 app.use('/transactions', transactionsRouter);
 
 app.get('/bill-data/:id', async (req, res) => {
