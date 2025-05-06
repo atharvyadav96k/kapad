@@ -14,7 +14,7 @@ productRouter.post('/deleteName/:id', productUtils.deleteByName);
 
 productRouter.post('/deleteSize/:id', productUtils.deleteQuality);
 
-productRouter.post('/getAll', productUtils.getAll);
+productRouter.post('/getAll/:page', productUtils.getAll);
 
 productRouter.post('/getSearch/:chalaNo', productUtils.getSearch);
 

@@ -7,6 +7,8 @@ const userRouter = require('./router/userRouter')
 const billRouter = require('./router/billRouter');
 const productRouter = require('./router/productRouter');
 const itemRouter = require('./router/itemRouter');
+const transactionsRouter = require('./router/transactions');
+
 const dashboardUtils = require('./utils/dashboard');
 const partyPage = require('./utils/partyPage');
 const billPage = require('./utils/billPage');
@@ -37,6 +39,7 @@ app.use('/bill', billRouter);
 app.use('/product', productRouter);
 app.use('/item', itemRouter);
 app.use('/barcode', barcodeRouter);
+app.use('/transactions', transactionsRouter);
 
 app.get('/bill-data/:id', async (req, res) => {
     const { id } = req.params;

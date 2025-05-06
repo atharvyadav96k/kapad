@@ -1,80 +1,98 @@
 const billSchema = require('../models/billModel');
+const {deliver} = require('../utils/logsUtils/deliveredItem');
+
 exports.get = async (req, res) => {
-    const {id} = req.params;
-    try{
+    const { id } = req.params;
+    try {
         const bill = await billSchema.findById(id);
-        res.status(200).json({data: bill.products});
-    }catch(err){
-        res.status(500).json({message: err.message})
+        res.status(200).json({ data: bill.products });
+    } catch (err) {
+        res.status(500).json({ message: err.message })
     }
 }
+
 exports.getAll = async (req, res) => {
+    const page = Math.max(parseInt(req.params.page) || 1, 1); // Ensure page is at least 1
+    const limit = 400;
+    const skip = (page - 1) * limit;
+    console.log(page);
     try {
         const totalCount = await billSchema.countDocuments();
         const bills = await billSchema
             .find()
             .select("id partyName chalanNo baleNo date")
-            .sort({ date: -1 }); 
+            .sort({ date: -1 })
+            .skip(skip)
+            .limit(limit);
 
+        const totalPages = Math.ceil(totalCount / limit);
+        // console.log(bills);
         return res.status(200).json({
             data: bills,
-            totalCount, 
+            totalCount,
+            currentPage: page,
+            totalPages,
         });
     } catch (err) {
         return res.status(500).json({ message: "Failed to fetch bills: " + err.message });
     }
 };
 
+
 exports.getSearch = async (req, res) => {
-    const {chalaNo} = req.params;
-    try{
+    const { chalaNo } = req.params;
+    try {
         const bills = await billSchema
-            .find({chalanNo: chalaNo})
+            .find({ chalanNo: chalaNo })
             .select("id partyNo chalanNo baleNo date");
         const reverse = bills.reverse();
         return res.status(200).json({
             data: reverse
         })
-    }catch(err){
-        return res.status(500).json({message: err.message})
+    } catch (err) {
+        return res.status(500).json({ message: err.message })
     }
 }
 
 exports.add = async (req, res) => {
     const { id } = req.params;
-    const { name, size, count } = req.body;
+    const { name, size, count, productId } = req.body;
 
     try {
+        console.log(productId);
         const bill = await billSchema.findById(id);
-        
+
         if (!bill) {
             return res.status(404).json({ error: 'Bill not found' });
         }
 
-        let products = bill.products || []; 
+        let products = bill.products || [];
         bill.billStatus = 1;
-
+        const response = await deliver({productId, quantity: parseFloat(size) * parseFloat(count), partyId: bill.partyId, chalanId: id});
+        console.log(response)
+        if(!response.success){
+            return res.status(300).json({
+                success: false,
+                message: "Unable to add item"
+            });
+        }
         const productIndex = products.findIndex(product => product.name === name);
 
         if (productIndex === -1) {
             products.push({ name, quality: [{ size, count }] });
         } else {
-            // If product with the same name exists, check for size within quality
             let existingProduct = products[productIndex];
-            existingProduct.quality = existingProduct.quality || []; 
+            existingProduct.quality = existingProduct.quality || [];
 
             const qualityIndex = existingProduct.quality.findIndex(quality => quality.size == size);
             if (qualityIndex === -1) {
-                // If no matching size, add new quality entry
                 existingProduct.quality.push({ size, count });
             } else {
-                // If matching size found, add to the existing count
-                existingProduct.quality[qualityIndex].count = 
+                existingProduct.quality[qualityIndex].count =
                     Number(existingProduct.quality[qualityIndex].count) + Number(count);
             }
         }
 
-        // Update bill.product and save
         bill.products = products;
         await bill.save();
 
@@ -163,7 +181,7 @@ exports.deleteByName = async (req, res) => {
     try {
         // Find the bill by ID
         const bill = await billSchema.findById(id);
-        
+
         if (bill) {
             let products = bill.producst;
             const productIndex = products.findIndex(product => product.name === name);
@@ -213,7 +231,7 @@ exports.deleteQuality = async (req, res) => {
             let existingProduct = products[productIndex];
             const qualityIndex = existingProduct.quality.findIndex(quality => quality.size == size);
             if (qualityIndex == -1) {
-            console.log("error 404 1")
+                console.log("error 404 1")
                 return res.status(404).json({
                     error: 'No quality found with the given size'
                 });
