@@ -11,6 +11,7 @@ view.get('/', (req, res)=>{
 view.get('/new-chalan',async (req, res)=>{
     const parti = await partiSchema.find().select("_id name");
     // console.log(parti)
+
     res.render("newchalan", {parti})
 });
 view.get('/chalan-list', async (req, res)=>{
